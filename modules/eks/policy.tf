@@ -73,25 +73,3 @@ resource "aws_iam_instance_profile" "k8s-node" {
   name = var.cluster-name
   role = aws_iam_role.k8s-node.name
 }
-
-####################
-# Join the cluster #
-####################
-locals {
-  config_map_aws_auth = <<CONFIGMAPAWSAUTH
-
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: aws-auth
-  namespace: kube-system
-data:
-  mapRoles: |
-    - rolearn: ${aws_iam_role.k8s-node.arn}
-      username: system:node:{{EC2PrivateDNSName}}
-      groups:
-        - system:bootstrappers
-        - system:nodes
-CONFIGMAPAWSAUTH
-}
